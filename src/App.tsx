@@ -1,24 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import LandingPage from './components/LandingPage';
 import UserDashboard from './components/UserDashboard';
 import HospitalPortal from './components/HospitalPortal';
 import AgentDashboard from './components/AgentDashboard';
 import DashboardOverview from './components/DashboardOverview';
 import ContactSupport from './components/ContactSupport';
+import { useAuth } from './context/AuthContext';
+import { signOut } from './services/authService';
 
 export type UserRole = 'user' | 'hospital' | 'agent' | null;
 export type CurrentView = 'landing' | 'dashboard' | 'contact' | 'overview';
 
 export default function App() {
+  const { currentUser } = useAuth();
   const [userRole, setUserRole] = useState<UserRole>(null);
   const [currentView, setCurrentView] = useState<CurrentView>('landing');
+
+  useEffect(() => {
+    if (!currentUser) {
+      setUserRole(null);
+      setCurrentView('landing');
+    }
+  }, [currentUser]);
 
   const handleLogin = (role: UserRole) => {
     setUserRole(role);
     setCurrentView('dashboard');
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await signOut();
     setUserRole(null);
     setCurrentView('landing');
   };
@@ -27,7 +38,7 @@ export default function App() {
     setCurrentView(view);
   };
 
-  if (currentView === 'landing') {
+  if (!currentUser) {
     return <LandingPage onLogin={handleLogin} />;
   }
 

@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { User, Building2, Hospital } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { LoginModal } from './LoginModal';
+import { UserRole } from '../App';
 
 interface LandingPageProps {
-  onLogin: (role: 'user' | 'hospital' | 'agent') => void;
+  onLogin: (role: UserRole) => void;
 }
 
 export default function LandingPage({ onLogin }: LandingPageProps) {
+  const [selectedRole, setSelectedRole] = useState<UserRole>(null);
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-blue-100 relative overflow-hidden">
       {/* Background Image with Overlay */}
@@ -39,7 +42,7 @@ export default function LandingPage({ onLogin }: LandingPageProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl w-full">
           {/* User/Policyholder Card */}
           <Card className="bg-white/90 backdrop-blur-sm hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer border-2 border-transparent hover:border-[#0052CC]">
-            <CardContent className="p-8 text-center" onClick={() => onLogin('user')}>
+            <CardContent className="p-8 text-center" onClick={() => setSelectedRole('user')}>
               <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-[#0052CC] to-[#00B8D9] rounded-full flex items-center justify-center">
                 <User className="w-10 h-10 text-white" />
               </div>
@@ -51,7 +54,7 @@ export default function LandingPage({ onLogin }: LandingPageProps) {
               </p>
               <Button 
                 className="w-full bg-gradient-to-r from-[#0052CC] to-[#00B8D9] hover:opacity-90"
-                onClick={() => onLogin('user')}
+                onClick={() => setSelectedRole('user')}
               >
                 Login as User
               </Button>
@@ -60,7 +63,7 @@ export default function LandingPage({ onLogin }: LandingPageProps) {
 
           {/* Hospital Card */}
           <Card className="bg-white/90 backdrop-blur-sm hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer border-2 border-transparent hover:border-[#0052CC]">
-            <CardContent className="p-8 text-center" onClick={() => onLogin('hospital')}>
+            <CardContent className="p-8 text-center" onClick={() => setSelectedRole('hospital')}>
               <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-[#00B8D9] to-[#0052CC] rounded-full flex items-center justify-center">
                 <Hospital className="w-10 h-10 text-white" />
               </div>
@@ -72,7 +75,7 @@ export default function LandingPage({ onLogin }: LandingPageProps) {
               </p>
               <Button 
                 className="w-full bg-gradient-to-r from-[#00B8D9] to-[#0052CC] hover:opacity-90"
-                onClick={() => onLogin('hospital')}
+                onClick={() => setSelectedRole('hospital')}
               >
                 Login as Hospital
               </Button>
@@ -81,7 +84,7 @@ export default function LandingPage({ onLogin }: LandingPageProps) {
 
           {/* Insurance Agent Card */}
           <Card className="bg-white/90 backdrop-blur-sm hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer border-2 border-transparent hover:border-[#0052CC]">
-            <CardContent className="p-8 text-center" onClick={() => onLogin('agent')}>
+            <CardContent className="p-8 text-center" onClick={() => setSelectedRole('agent')}>
               <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-[#0052CC] to-[#00B8D9] rounded-full flex items-center justify-center">
                 <Building2 className="w-10 h-10 text-white" />
               </div>
@@ -93,13 +96,21 @@ export default function LandingPage({ onLogin }: LandingPageProps) {
               </p>
               <Button 
                 className="w-full bg-gradient-to-r from-[#0052CC] to-[#00B8D9] hover:opacity-90"
-                onClick={() => onLogin('agent')}
+                onClick={() => setSelectedRole('agent')}
               >
                 Login as Agent
               </Button>
             </CardContent>
           </Card>
         </div>
+
+        {selectedRole && (
+          <LoginModal
+            open={!!selectedRole}
+            onClose={() => setSelectedRole(null)}
+            onLogin={() => onLogin(selectedRole)}
+          />
+        )}
 
         {/* Features */}
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl text-center">
